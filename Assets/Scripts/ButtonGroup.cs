@@ -15,7 +15,7 @@ public class ButtonGroup : MonoBehaviour
         if (buttons != null) {
             for (int i = 0; i < buttons.Count; i++) {
                 if (i < currentIndex || i > currentIndex) {
-                    buttons[i].ToggleButtonDown(true);
+                    buttons[i].ToggleButtonDown(false);
                 }
                 else {
                     buttons[i].ToggleButtonUp(true);

@@ -1,19 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using GuamboCollections;
 
-// Switch tiles in the game scene:
-// =================================================
-// SwitchTileManager (Parent GameObject):
-//      1. SwitchTilesOffGroup (Child 1 GameObject):
-//          a. Transparent Tile (GameObject)
-//          b. Transparent Tile (GameObject)
-//          c. etc.
-//      2. SwitchTilesOnGroup (Child 2 GameObject)
-//          a. Actual Tile (GameObject)
-//          b. Actual Tile (GameObject)
-//          c. etc.
-// =================================================
 // Transparent Tile
 // - Sprite Renderer (Component)
 // - Layer = default
@@ -25,46 +15,28 @@ using UnityEngine;
 
 public class SwitchTileManager : MonoBehaviour
 {
-    // Manage toggling between SwitchTilesOffGroup and SwitchTilesOnGroup
-    public GameObject switchTilesOffGroup;
-    public GameObject switchTilesOnGroup;
-    public bool isActivated = false;
-
-    void Start() {
-        if (switchTilesOffGroup && switchTilesOnGroup) {
-            if (isActivated) {
-                switchTilesOnGroup.SetActive(true);
-                switchTilesOffGroup.SetActive(false);
-            }
-            else {
-                switchTilesOnGroup.SetActive(false);
-                switchTilesOffGroup.SetActive(true);
-            }
-        }
-    }
+    public Tilemap tilemap;
+    public Tile activatedTile;
+    public Tile deactivatedTile;
+    public List<Pair<Vector3, bool>> switchTiles;
 
     public void ToggleSwitchTiles() {
-        isActivated = !isActivated;
-        if (isActivated == true) {
-            ActivateSwitchTiles();
-        }
-        else {
-            DeactivateSwitchTiles();
-        }
-    }
-
-    private void ActivateSwitchTiles() {
-        if (switchTilesOffGroup && switchTilesOnGroup) {
-            switchTilesOffGroup.SetActive(false);
-            switchTilesOnGroup.SetActive(true);
-        }
-    }
-
-    private void DeactivateSwitchTiles() {
-        if (switchTilesOffGroup && switchTilesOnGroup) {
-            switchTilesOnGroup.SetActive(false);
-            switchTilesOffGroup.SetActive(true);
+        for (int i = 0; i < switchTiles.Count; ++i) {
+            Vector3Int tilePosition = tilemap.WorldToCell(switchTiles[i].first);
+            if (switchTiles[i].second == true) {
+                // Deactivate Tile
+                tilemap.SetTile(tilePosition, deactivatedTile);
+                tilemap.SetColliderType(tilePosition, Tile.ColliderType.None);
+                tilemap.RefreshTile(tilePosition);
+                switchTiles[i].second = false;
+            }
+            else {
+                // Activate Tile
+                tilemap.SetTile(tilePosition, activatedTile);
+                tilemap.SetColliderType(tilePosition, Tile.ColliderType.Sprite);
+                tilemap.RefreshTile(tilePosition);
+                switchTiles[i].second = true;
+            }
         }
     }
-
 }

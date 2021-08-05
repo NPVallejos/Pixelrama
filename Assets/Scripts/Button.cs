@@ -19,34 +19,34 @@ public class Button : MonoBehaviour
     public Sprite buttonDownSprite;
     public PolygonCollider2D buttonUpCollider;
     public PolygonCollider2D buttonDownCollider;
-    public GameObject switchTiles;
+    public SwitchTileManager switchTileManager;
 
     void Awake() {
         if (isActivated)
             ToggleButtonDown(true);
         else
-            ToggleButtonUp(true);
+            ToggleButtonUp(false);
     }
 
-    public void ToggleButtonDown(bool shouldToggleSwitchTiles) {
+    public void ToggleButtonDown(bool toggleSwitchTiles) {
         isActivated = true;
         GetComponent<SpriteRenderer>().sprite = buttonDownSprite;
         GetComponent<BoxCollider2D>().enabled = false;
         buttonUpCollider.enabled = false;
         buttonDownCollider.enabled = true;
-        if (switchTiles != null && shouldToggleSwitchTiles) {
-            switchTiles.GetComponent<SwitchTileManager>().ToggleSwitchTiles();
+        if (toggleSwitchTiles && switchTileManager) {
+            switchTileManager.ToggleSwitchTiles();
         }
     }
 
-    public void ToggleButtonUp(bool shouldToggleSwitchTiles) {
+    public void ToggleButtonUp(bool toggleSwitchTiles) {
         isActivated = false;
         GetComponent<SpriteRenderer>().sprite = buttonUpSprite;
         GetComponent<BoxCollider2D>().enabled = true;
         buttonUpCollider.enabled = true;
         buttonDownCollider.enabled = false;
-        if (switchTiles != null && shouldToggleSwitchTiles) {
-            switchTiles.GetComponent<SwitchTileManager>().ToggleSwitchTiles();
+        if (toggleSwitchTiles && switchTileManager) {
+            switchTileManager.ToggleSwitchTiles();
         }
     }
 
